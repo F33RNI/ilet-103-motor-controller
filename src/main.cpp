@@ -104,7 +104,7 @@ void loop() {
         read_setpoint();
 
         // Enable command 19 according to RPM
-        boolean command_19 = rpm_setpoint_raw <= RPM_SETPOINTS[sizeof(RPM_SETPOINTS) / sizeof(float) / 2];
+        boolean command_19 = rpm_setpoint_raw > RPM_SETPOINTS[sizeof(RPM_SETPOINTS) / sizeof(float) / 2];
 #ifdef COMMAND_19_INVERTED
         digitalWrite(COMMAND_19_PIN, !command_19);
 #else
