@@ -27,30 +27,35 @@
 #include <TimerOne.h>
 
 #include "config.h"
-#include "functions.h"
 #include "pins.h"
+
+#include "motor.h"
 
 /**
  * @brief Sets up timer1-based pwm (9 and 10 pins on ATmega328)
  */
-void motor_init(void) {
-    Timer1.initialize(MOTOR_PWM_PERIOD);
+void
+Motor::init (void)
+{
+    Timer1.initialize (MOTOR_PWM_PERIOD);
 #ifdef MOTOR_PWM_INVERTED
-    Timer1.pwm(MOTOR_PWM_PIN, 1023U);
+    Timer1.pwm (MOTOR_PWM_PIN, 1023U);
 #else
-    Timer1.pwm(MOTOR_PWM_PIN, 0U);
+    Timer1.pwm (MOTOR_PWM_PIN, 0U);
 #endif
 }
 
 /**
  * @brief Writes PWM to the motor
  *
- * @param pwm 0 to 1 (0 - off, 1 - on)
+ * @param pwm 0 to 1 (0 - OFF, 1 - ON)
  */
-void motor_write(float pwm) {
+void
+Motor::write (float pwm)
+{
 #ifdef MOTOR_PWM_INVERTED
-    Timer1.setPwmDuty(MOTOR_PWM_PIN, 1023U - ((uint32_t) (pwm * 1023.f)));
+    Timer1.setPwmDuty (MOTOR_PWM_PIN, 1023U - ((uint32_t)(pwm * 1023.f)));
 #else
-    Timer1.setPwmDuty(MOTOR_PWM_PIN, (uint32_t) (pwm * 1023.f));
+    Timer1.setPwmDuty (MOTOR_PWM_PIN, (uint32_t)(*pwm * 1023.f));
 #endif
 }

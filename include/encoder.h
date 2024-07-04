@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * long with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #ifndef ENCODER_H__
 #define ENCODER_H__
 
@@ -29,15 +30,32 @@
 #define ENCODER_INTERRUPT_MODE RISING
 
 // Actual filter maximum
-const float FILTER_MAX = .990f;
+const float FILTER_MAX PROGMEM = .990f;
 
-volatile uint64_t time_prev;
-volatile float time_delta;
-float rpm_raw_prev;
-volatile float rpm_filtered;
-volatile boolean triggered;
-boolean is_interrupt_attached;
+class Encoder
+{
+  public:
+    void init (void);
+    boolean stall_check (void);
+    void stop (void);
+    void resume (void);
+    float get_time_delta (void);
+    float get_rpm_filtered (void);
+    boolean get_triggered (void);
+    void clear_triggered (void);
 
-void encoder_callback(void);
+  private:
+    volatile uint64_t time_prev;
+    volatile float time_delta;
+    float rpm_raw_prev;
+    volatile float rpm_filtered;
+    volatile boolean triggered;
+    boolean is_interrupt_attached;
+
+    void handle_interrupt (void);
+    static void isr (void);
+};
+
+extern Encoder encoder;
 
 #endif

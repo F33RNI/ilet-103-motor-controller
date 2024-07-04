@@ -1,7 +1,7 @@
 /**
- * @file pid.h
+ * @file rotarySwitch.h
  * @author Fern Lane
- * @brief PID-controller class definitions
+ * @brief Rotary switch class definitions
  *
  * @copyright Copyright (c) 2024 Fern Lane
  *
@@ -22,20 +22,21 @@
  * long with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef PID_H__
-#define PID_H__
+#ifndef ROTARY_SWITCH_H__
+#define ROTARY_SWITCH_H__
 
-#include <Arduino.h>
-
-class PID
+class RotarySwitch
 {
-  public:
-    PID (void);
-    float calculate (float error, float time_delta);
-    void reset (void);
-
   private:
-    float integral_accumulator, error_prev;
+    float rpm_setpoint_raw, rpm_setpoint_filtered;
+
+  public:
+    RotarySwitch ();
+    float read_setpoint (void);
+    float filter_setpoint (void);
+    void reset (void);
 };
+
+extern RotarySwitch rotarySwitch;
 
 #endif

@@ -21,13 +21,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * long with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #ifndef PINS_H__
 #define PINS_H__
 
 #include <Arduino.h>
 
 // Rotary switch pins
-const uint8_t SPEED_SELECTOR_PINS[] = {4U, 5U, 6U, 7U, 8U};
+const uint8_t SPEED_SELECTOR_PINS[] = { 4U, 5U, 6U, 7U, 8U };
 
 // Must be 2 or 3
 const uint8_t ENCODER_PIN = 3U;

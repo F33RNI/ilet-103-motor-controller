@@ -26,34 +26,42 @@
 #include <util/atomic.h>
 
 #include "config.h"
-#include "encoder.h"
-#include "functions.h"
 #include "pins.h"
+
+#include "encoder.h"
+
+// Preinstantiate
+Encoder encoder;
 
 /**
  * @brief Sets up encoder pin and connects interrupt callback
  */
-void encoder_init(void) {
-    pinMode(ENCODER_PIN, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(ENCODER_PIN), encoder_callback, ENCODER_INTERRUPT_MODE);
+void
+Encoder::init (void)
+{
+    pinMode (ENCODER_PIN, INPUT_PULLUP);
+    attachInterrupt (digitalPinToInterrupt (ENCODER_PIN), isr, ENCODER_INTERRUPT_MODE);
     is_interrupt_attached = true;
 }
 
 /**
  * @brief Interrupt callback (encoder)
- * Calculates motor speed in RPM. Call encoder_check_triggered() to check for new cycle
+ * Calculates motor speed in RPM. Call check_triggered() to check for new cycle
  */
-void encoder_callback(void) {
-    uint64_t time_ = micros();
+void
+Encoder::handle_interrupt (void)
+{
+    uint64_t time_ = micros ();
 
     // micros() overflow
-    if (time_prev == 0 || time_prev >= time_) {
-        time_prev = time_;
-        return;
-    }
+    if (time_prev == 0 || time_prev >= time_)
+        {
+            time_prev = time_;
+            return;
+        }
 
     // Calculate time between callbacks (encoder period) in seconds
-    time_delta = (float) (time_ - time_prev) / 1.e6f;
+    time_delta = (float)(time_ - time_prev) / 1.e6f;
     time_prev = time_;
 
     // Calculate unfiltered rpm
@@ -62,18 +70,19 @@ void encoder_callback(void) {
     // First time -> don't filter
     if (rpm_filtered == 0.f)
         rpm_filtered = rpm_raw;
-    else {
-        // Calculate filter with variable cycle time
-        float filter_k = RPM_FILTER / time_delta;
-        if (filter_k < 0.f)
-            filter_k = 0.f;
-        else if (filter_k > FILTER_MAX)
-            filter_k = FILTER_MAX;
+    else
+        {
+            // Calculate filter with variable cycle time
+            float filter_k = RPM_FILTER / time_delta;
+            if (filter_k < 0.f)
+                filter_k = 0.f;
+            else if (filter_k > FILTER_MAX)
+                filter_k = FILTER_MAX;
 
-        // Filter it
-        rpm_filtered =
-            rpm_filtered * filter_k + rpm_raw * (1.f - filter_k) / 2.f + rpm_raw_prev * (1.f - filter_k) / 2.f;
-    }
+            // Filter it
+            rpm_filtered
+                = rpm_filtered * filter_k + rpm_raw * (1.f - filter_k) / 2.f + rpm_raw_prev * (1.f - filter_k) / 2.f;
+        }
     rpm_raw_prev = rpm_raw;
 
     // Set triggered flag
@@ -83,44 +92,49 @@ void encoder_callback(void) {
 /**
  * @brief Checks if no interrupts in a long time and slowly brings rpm_filtered to 0
  * and time_delta to the actual time delta
- * Call in a main loop() before everything (before calling encoder_clear_triggered())
+ * Call it in a main loop() before everything (before calling clear_triggered())
  *
  * @return boolean true if stalled
  */
-boolean encoder_stall_check(void) {
-    uint64_t time_current = micros();
+boolean
+Encoder::stall_check (void)
+{
+    uint64_t time_current = micros ();
 
     float time_prev_;
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { time_prev_ = time_prev; }
+    ATOMIC_BLOCK (ATOMIC_RESTORESTATE) { time_prev_ = time_prev; }
 
     // Ignore if interrupt is set or time is incorrect
-    if (encoder_get_triggered() || time_prev_ > time_current) {
-        // Fix time
-        if (time_prev_ > time_current) {
-            noInterrupts();
-            time_prev = time_current;
-            interrupts();
-        }
+    if (get_triggered () || time_prev_ > time_current)
+        {
+            // Fix time
+            if (time_prev_ > time_current)
+                {
+                    noInterrupts ();
+                    time_prev = time_current;
+                    interrupts ();
+                }
 
-        return false;
-    }
+            return false;
+        }
 
     boolean stalled = false;
 
-    float time_delta_test = (float) (time_current - time_prev_) / 1.e6f;
-    if ((1.f / time_delta_test) / ENCODER_DIVIDER * 60.f < ENCODER_MIN_RPM) {
+    float time_delta_test = (float)(time_current - time_prev_) / 1.e6f;
+    if ((1.f / time_delta_test) / ENCODER_DIVIDER * 60.f < ENCODER_MIN_RPM)
+        {
 
-        // Disable interrupts to prevent errors
-        noInterrupts();
+            // Disable interrupts to prevent errors
+            noInterrupts ();
 
-        // Set variables
-        rpm_filtered *= .98f;
-        time_delta = time_delta_test;
-        stalled = true;
+            // Set variables
+            rpm_filtered *= .98f;
+            time_delta = time_delta_test;
+            stalled = true;
 
-        // Enable interrupts back
-        interrupts();
-    }
+            // Enable interrupts back
+            interrupts ();
+        }
 
     return stalled;
 }
@@ -128,16 +142,19 @@ boolean encoder_stall_check(void) {
 /**
  * @brief Detaches interrupts and sets time_prev to current micros() and time_delta and rpm_filtered to 0
  */
-void encoder_stop(void) {
+void
+Encoder::stop (void)
+{
     // Detach encoder interrupts
-    if (is_interrupt_attached) {
-        noInterrupts();
-        detachInterrupt(digitalPinToInterrupt(ENCODER_PIN));
-        is_interrupt_attached = false;
-        interrupts();
-    }
+    if (is_interrupt_attached)
+        {
+            noInterrupts ();
+            detachInterrupt (digitalPinToInterrupt (ENCODER_PIN));
+            is_interrupt_attached = false;
+            interrupts ();
+        }
 
-    time_prev = micros();
+    time_prev = micros ();
     time_delta = 0.f;
     rpm_filtered = 0.f;
 }
@@ -145,46 +162,72 @@ void encoder_stop(void) {
 /**
  * @brief Attaches encoder interrupt and sets time_prev to current micros() and time_delta and rpm_filtered to 0
  */
-void encoder_resume(void) {
+void
+Encoder::resume (void)
+{
     // Attach back
-    if (!is_interrupt_attached) {
-        attachInterrupt(digitalPinToInterrupt(ENCODER_PIN), encoder_callback, ENCODER_INTERRUPT_MODE);
-        is_interrupt_attached = true;
-    }
+    if (!is_interrupt_attached)
+        {
+            attachInterrupt (digitalPinToInterrupt (ENCODER_PIN), isr, ENCODER_INTERRUPT_MODE);
+            is_interrupt_attached = true;
+        }
 
-    time_prev = micros();
+    time_prev = micros ();
     time_delta = 0.f;
     rpm_filtered = 0.f;
 }
 
 /**
  * @return float last cycle time (in seconds)
- * Call encoder_get_triggered() before to make sure you can retrieve data
  */
-float encoder_get_time_delta(void) {
+float
+Encoder::get_time_delta (void)
+{
     float time_delta_;
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { time_delta_ = time_delta; }
+    ATOMIC_BLOCK (ATOMIC_RESTORESTATE) { time_delta_ = time_delta; }
     return time_delta_;
 }
 
 /**
  * @return float current RPM (filtered)
- * Call encoder_get_triggered() before to make sure you can retrieve data
  */
-float encoder_get_rpm_filtered(void) {
+float
+Encoder::get_rpm_filtered (void)
+{
     float rpm_filtered_;
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { rpm_filtered_ = rpm_filtered; }
+    ATOMIC_BLOCK (ATOMIC_RESTORESTATE) { rpm_filtered_ = rpm_filtered; }
     return rpm_filtered_;
 }
 
 /**
  * @return boolean true if encoder triggered
- * Call encoder_clear_triggered() to reset it
+ * Call clear_triggered() to reset it
  */
-boolean encoder_get_triggered(void) { return triggered; }
+boolean
+Encoder::get_triggered (void)
+{
+    boolean triggered_;
+    ATOMIC_BLOCK (ATOMIC_RESTORESTATE) { triggered_ = triggered; }
+    return triggered_;
+}
 
 /**
  * @brief Sets triggered to false (clears triggered flag)
- * Make sure encoder_get_triggered() is true before calling it!
  */
-void encoder_clear_triggered(void) { triggered = false; }
+void
+Encoder::clear_triggered (void)
+{
+    // Ignore if not triggered to prevent errors
+    if (!get_triggered ())
+        return;
+    triggered = false;
+}
+
+/**
+ * @brief Static interrupt callback (wrapper for handle_interrupt())
+ */
+void
+Encoder::isr (void)
+{
+    encoder.handle_interrupt ();
+}

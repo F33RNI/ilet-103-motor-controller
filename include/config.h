@@ -21,13 +21,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * long with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 #ifndef CONFIG_H__
 #define CONFIG_H__
 
 #include <Arduino.h>
 
-// Uncomment to receive rpm_setpoint_filtered, rom_filtered and pid_output separated by tab (/t) at 115200
-// #define DEBUG
+// Uncomment to receive rpm_setpoint_filtered and rpm_filtered separated by tab (/t) at 115200
+#define DEBUG
 
 // In microseconds (1 / (21us / 1000 / 1000) ~= 47619Hz)
 const uint64_t MOTOR_PWM_PERIOD = 21UL;
@@ -50,12 +51,12 @@ const float SETPOINT_FILTER = .94;
 // RPM @ 6mm: (IPS * 25.4 / (pi * 6 mm)) * 60, RPM @ 100 mm / 42.5 mm: (IPS * 25.4 / (pi * 6 mm)) * 60 * (100 / 42)
 // <https://en.wikipedia.org/wiki/Audio_tape_specifications>
 // Standard IPS: 1.875, 3.75, 7.5 -> motor RPMs: 360.94, 721.88, 1443.76
-const float RPM_SETPOINTS[] = {360.94f, 541.41f, 721.88f, 1082.82f, 1443.76f};
+const float RPM_SETPOINTS[] = { 360.94f, 541.41f, 721.88f, 1082.82f, 1443.76f };
 
 // PID values
-const float PID_P_GAIN = .0008f;
+const float PID_P_GAIN = .0012f;
 const float PID_I_GAIN = .0036f;
-const float PID_D_GAIN = .000004f;
+const float PID_D_GAIN = .000002f;
 
 // Integral part of the PID will be clamped to this range to prevent integral windup
 const float PID_MIN_INTEGRAL = -1000.f;

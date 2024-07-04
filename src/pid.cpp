@@ -25,48 +25,61 @@
 #include <Arduino.h>
 
 #include "config.h"
-#include "functions.h"
+
 #include "pid.h"
 
 /**
- * @brief Calculates one cycle of PID-controller
+ * @brief Constructs a new PID::PID object
+ * (wrapper for reset() that initializes class variables)
+ */
+PID::PID (void) { reset (); }
+
+/**
+ * @brief Calculate one cycle of PID-controller
  *
  * @param error setpoint - input
  * @param time_delta current time - previous time (in seconds)
- * @param pid_output pointer to float pid output (will be in [-PID_MIN_MAX_OUT, PID_MIN_MAX_OUT] range)
+ * @param pid_output existing variable to write into (will be in [-PID_MIN_MAX_OUT, PID_MIN_MAX_OUT] range)
  */
-void pid_calculate(float error, float time_delta, float *pid_output) {
+float
+PID::calculate (float error, float time_delta)
+{
     // Calculate P term
-    float pid_p_output = PID_P_GAIN * error;
+    float outputP = PID_P_GAIN * error;
 
     // Calculate I term
-    pid_i_mem += error * time_delta;
+    integral_accumulator += error * time_delta;
 
     // Prevent integral windup
-    if (pid_i_mem > PID_MAX_INTEGRAL)
-        pid_i_mem = PID_MAX_INTEGRAL;
-    else if (pid_i_mem < PID_MIN_INTEGRAL)
-        pid_i_mem = PID_MIN_INTEGRAL;
+    if (integral_accumulator > PID_MAX_INTEGRAL)
+        integral_accumulator = PID_MAX_INTEGRAL;
+    else if (integral_accumulator < PID_MIN_INTEGRAL)
+        integral_accumulator = PID_MIN_INTEGRAL;
 
     // Calculate D term
-    float pid_d_output = 0.f;
+    float outputD = 0.f;
     if (time_delta != 0.f)
-        pid_d_output = PID_D_GAIN * ((error - pid_prev_d_error) / time_delta);
+        outputD = PID_D_GAIN * ((error - error_prev) / time_delta);
+    error_prev = error;
 
     // Calculate total output
-    *pid_output = pid_p_output + PID_I_GAIN * pid_i_mem + pid_d_output;
+    float pid_output = outputP + PID_I_GAIN * integral_accumulator + outputD;
 
     // Clamp output
-    if (*pid_output > PID_MAX_OUT)
-        *pid_output = PID_MAX_OUT;
-    else if (*pid_output < PID_MIN_OUT)
-        *pid_output = PID_MIN_OUT;
+    if (pid_output > PID_MAX_OUT)
+        pid_output = PID_MAX_OUT;
+    else if (pid_output < PID_MIN_OUT)
+        pid_output = PID_MIN_OUT;
+
+    return pid_output;
 }
 
 /**
  * @brief Resets PID's I and D variables
  */
-void pid_reset(void) {
-    pid_i_mem = 0.f;
-    pid_prev_d_error = 0.f;
+void
+PID::reset (void)
+{
+    integral_accumulator = 0.f;
+    error_prev = 0.f;
 }

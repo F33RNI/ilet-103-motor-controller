@@ -1,7 +1,7 @@
 /**
- * @file pins.h
+ * @file motor.h
  * @author Fern Lane
- * @brief All global function definitions
+ * @brief Motor class definitions
  *
  * @copyright Copyright (c) 2024 Fern Lane
  *
@@ -22,27 +22,17 @@
  * long with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef FUNCTIONS_H__
-#define FUNCTIONS_H__
+#ifndef MOTOR_H__
+#define MOTOR_H__
 
 #include <Arduino.h>
 
-// encoder.cpp
-void encoder_init(void);
-boolean encoder_stall_check(void);
-void encoder_stop(void);
-void encoder_resume(void);
-float encoder_get_time_delta(void);
-float encoder_get_rpm_filtered(void);
-boolean encoder_get_triggered(void);
-void encoder_clear_triggered(void);
-
-// motor.cpp
-void motor_init(void);
-void motor_write(float pwm);
-
-// pid.cpp
-void pid_calculate(float error, float time_delta, float *pid_output);
-void pid_reset(void);
+class Motor
+{
+  public:
+    Motor (void) = delete;
+    static void init (void);
+    static void write (float pwm);
+};
 
 #endif
