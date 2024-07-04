@@ -25,10 +25,10 @@
 #include <Arduino.h>
 #include <util/atomic.h>
 
-#include "config.h"
-#include "pins.h"
+#include "include/config.h"
+#include "include/pins.h"
 
-#include "encoder.h"
+#include "include/encoder.h"
 
 // Preinstantiate
 Encoder encoder;

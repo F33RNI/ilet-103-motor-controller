@@ -24,12 +24,14 @@
 
 #include <Arduino.h>
 
-#include <TimerOne.h>
+// For official Arduino IDE compatibility
+#include "lib/TimerOne/TimerOne.cpp"
+#include "lib/TimerOne/TimerOne.h"
 
-#include "config.h"
-#include "pins.h"
+#include "include/config.h"
+#include "include/pins.h"
 
-#include "motor.h"
+#include "include/motor.h"
 
 /**
  * @brief Sets up timer1-based pwm (9 and 10 pins on ATmega328)

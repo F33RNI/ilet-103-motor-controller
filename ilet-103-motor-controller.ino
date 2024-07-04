@@ -24,13 +24,15 @@
 
 #include <Arduino.h>
 
-#include "config.h"
-#include "pins.h"
+// For Arduino IDE compatibility
+#include "include/config.h"
+#include "include/pins.h"
 
-#include "encoder.h"
-#include "motor.h"
-#include "pid.h"
-#include "rotarySwitch.h"
+// For Arduino IDE compatibility
+#include "include/encoder.h"
+#include "include/motor.h"
+#include "include/pid.h"
+#include "include/rotarySwitch.h"
 
 boolean motor_enabled_prev;
 

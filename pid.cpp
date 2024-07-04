@@ -24,9 +24,9 @@
 
 #include <Arduino.h>
 
-#include "config.h"
+#include "include/config.h"
 
-#include "pid.h"
+#include "include/pid.h"
 
 /**
  * @brief Constructs a new PID::PID object

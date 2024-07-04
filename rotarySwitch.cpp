@@ -24,10 +24,10 @@
 
 #include <Arduino.h>
 
-#include "config.h"
-#include "pins.h"
+#include "include/config.h"
+#include "include/pins.h"
 
-#include "rotarySwitch.h"
+#include "include/rotarySwitch.h"
 
 // Preinstantiate
 RotarySwitch rotarySwitch;

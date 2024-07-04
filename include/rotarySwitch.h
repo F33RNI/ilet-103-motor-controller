@@ -25,6 +25,8 @@
 #ifndef ROTARY_SWITCH_H__
 #define ROTARY_SWITCH_H__
 
+#include <Arduino.h>
+
 class RotarySwitch
 {
   private:
