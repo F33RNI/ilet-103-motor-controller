@@ -27,7 +27,7 @@
 #include "include/config.h"
 #include "include/pins.h"
 
-#include "include/rotarySwitch.h"
+#include "include/rotary_switch.h"
 
 // Preinstantiate
 RotarySwitch rotarySwitch;

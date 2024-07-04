@@ -45,7 +45,7 @@ float
 PID::calculate (float error, float time_delta)
 {
     // Calculate P term
-    float outputP = PID_P_GAIN * error;
+    float p_output = PID_P_GAIN * error;
 
     // Calculate I term
     integral_accumulator += error * time_delta;
@@ -57,13 +57,13 @@ PID::calculate (float error, float time_delta)
         integral_accumulator = PID_MIN_INTEGRAL;
 
     // Calculate D term
-    float outputD = 0.f;
+    float d_output = 0.f;
     if (time_delta != 0.f)
-        outputD = PID_D_GAIN * ((error - error_prev) / time_delta);
+        d_output = PID_D_GAIN * ((error - error_prev) / time_delta);
     error_prev = error;
 
     // Calculate total output
-    float pid_output = outputP + PID_I_GAIN * integral_accumulator + outputD;
+    float pid_output = p_output + PID_I_GAIN * integral_accumulator + d_output;
 
     // Clamp output
     if (pid_output > PID_MAX_OUT)

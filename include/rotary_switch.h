@@ -1,5 +1,5 @@
 /**
- * @file rotarySwitch.h
+ * @file rotary_switch.h
  * @author Fern Lane
  * @brief Rotary switch class definitions
  *

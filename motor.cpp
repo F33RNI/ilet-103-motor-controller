@@ -24,8 +24,10 @@
 
 #include <Arduino.h>
 
-// For official Arduino IDE compatibility
+// For official Arduino IDE compatibility. Don't need to include .cpp for PlatformIO
+#ifndef PLATFORMIO_STYLE_IMPORTS
 #include "lib/TimerOne/TimerOne.cpp"
+#endif
 #include "lib/TimerOne/TimerOne.h"
 
 #include "include/config.h"

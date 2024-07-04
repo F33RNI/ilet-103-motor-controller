@@ -32,7 +32,7 @@
 #include "include/encoder.h"
 #include "include/motor.h"
 #include "include/pid.h"
-#include "include/rotarySwitch.h"
+#include "include/rotary_switch.h"
 
 boolean motor_enabled_prev;
 
