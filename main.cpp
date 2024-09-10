@@ -24,19 +24,22 @@
 
 #include <Arduino.h>
 
-// For Arduino IDE compatibility
+// For official Arduino IDE compatibility. Don't need to include .cpp for PlatformIO
+#ifndef PLATFORMIO_STYLE_IMPORTS
+#include "lib/PetalPID/src/PetalPID.cpp"
+#endif
+#include "lib/PetalPID/src/PetalPID.h"
+
 #include "include/config.h"
 #include "include/pins.h"
 
-// For Arduino IDE compatibility
 #include "include/encoder.h"
 #include "include/motor.h"
-#include "include/pid.h"
 #include "include/rotary_switch.h"
 
 boolean motor_enabled_prev;
 
-PID pid = PID();
+PetalPID pid = PetalPID();
 
 void setup() {
     // Setup encoder
@@ -55,7 +58,10 @@ void setup() {
     digitalWrite(COMMAND_19_PIN, HIGH);
 #endif
 
-    // Setup motor
+    // Setup PID motor
+    pid.set_min_max_output(PID_MIN_OUT, PID_MAX_OUT);
+    pid.set_min_max_integral(PID_MIN_INTEGRAL, PID_MAX_INTEGRAL);
+    pid.set_gains(PID_P_GAIN, PID_I_GAIN, PID_D_GAIN);
     Motor::init();
 
     // Setup serial port for debugging
@@ -118,13 +124,8 @@ void loop() {
         float rpm_setpoint_filtered = rotarySwitch.filter_setpoint();
 
         // Calculate PID only if motor is enabled
-        if (motor_enabled) {
-            // Calculate PID input error as difference between setpoint and measured RPM
-            float pid_error = rpm_setpoint_filtered - encoder.get_rpm_filtered();
-
-            // Calculate PID and it to the motor
-            Motor::write(pid.calculate(pid_error, encoder.get_time_delta()));
-        }
+        if (motor_enabled)
+            Motor::write(pid.calculate(encoder.get_rpm_filtered(), rpm_setpoint_filtered, micros()));
 
         // Reset PID if motor is disabled
         else

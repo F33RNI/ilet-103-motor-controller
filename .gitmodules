@@ -1,3 +1,6 @@
 [submodule "lib/TimerOne"]
 	path = lib/TimerOne
 	url = https://github.com/PaulStoffregen/TimerOne
+[submodule "lib/PetalPID"]
+	path = lib/PetalPID
+	url = https://github.com/F33RNI/PetalPID

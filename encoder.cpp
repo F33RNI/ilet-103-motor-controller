@@ -161,15 +161,6 @@ void Encoder::resume(void) {
 }
 
 /**
- * @return float last cycle time (in seconds)
- */
-float Encoder::get_time_delta(void) {
-    float time_delta_;
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) { time_delta_ = time_delta; }
-    return time_delta_;
-}
-
-/**
  * @return float current RPM (filtered)
  */
 float Encoder::get_rpm_filtered(void) {

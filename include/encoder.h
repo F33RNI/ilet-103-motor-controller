@@ -38,7 +38,6 @@ class Encoder {
     boolean stall_check(void);
     void stop(void);
     void resume(void);
-    float get_time_delta(void);
     float get_rpm_filtered(void);
     boolean get_triggered(void);
     void clear_triggered(void);
