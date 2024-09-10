@@ -138,6 +138,6 @@
   git clone --recursive https://github.com/F33RNI/ilet-103-motor-controller.git
   ```
 
-2. При редактиовании / добавлении кода, следуйте стилю [GNU](https://www.gnu.org/prep/standards/standards.html), как указано в `.clang-format`;
+2. При редактиовании / добавлении кода, следуйте стилю, указанному в `.clang-format`;
 3. При создании коммитов, используйте стиль [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#specification>)
 4. Создайте пул-реквест.

@@ -35,8 +35,7 @@ RotarySwitch rotarySwitch;
 /**
  * @brief Constructs a new Rotary Switch:: Rotary Switch object
  */
-RotarySwitch::RotarySwitch (void)
-{
+RotarySwitch::RotarySwitch(void) {
     rpm_setpoint_raw = RPM_SETPOINTS[0];
     rpm_setpoint_filtered = RPM_SETPOINTS[0];
 }
@@ -47,11 +46,9 @@ RotarySwitch::RotarySwitch (void)
  *
  * @return float unfiltered (RAW) RPM
  */
-float
-RotarySwitch::read_setpoint (void)
-{
-    for (uint8_t i = 0; i < sizeof (SPEED_SELECTOR_PINS) / sizeof (uint8_t); ++i)
-        if (!digitalRead (SPEED_SELECTOR_PINS[i]))
+float RotarySwitch::read_setpoint(void) {
+    for (uint8_t i = 0; i < sizeof(SPEED_SELECTOR_PINS) / sizeof(uint8_t); ++i)
+        if (!digitalRead(SPEED_SELECTOR_PINS[i]))
             rpm_setpoint_raw = RPM_SETPOINTS[i];
 
     return rpm_setpoint_raw;
@@ -62,9 +59,7 @@ RotarySwitch::read_setpoint (void)
  *
  * @return float filtered RPM
  */
-float
-RotarySwitch::filter_setpoint (void)
-{
+float RotarySwitch::filter_setpoint(void) {
     rpm_setpoint_filtered = rpm_setpoint_filtered * SETPOINT_FILTER + rpm_setpoint_raw * (1.f - SETPOINT_FILTER);
     return rpm_setpoint_filtered;
 }
@@ -72,9 +67,7 @@ RotarySwitch::filter_setpoint (void)
 /**
  * @brief Sets rpm_setpoint_raw and rpm_setpoint_filtered to 0
  */
-void
-RotarySwitch::reset (void)
-{
+void RotarySwitch::reset(void) {
     rpm_setpoint_raw = 0.f;
     rpm_setpoint_filtered = 0.f;
 }

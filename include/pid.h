@@ -27,12 +27,11 @@
 
 #include <Arduino.h>
 
-class PID
-{
+class PID {
   public:
-    PID (void);
-    float calculate (float error, float time_delta);
-    void reset (void);
+    PID(void);
+    float calculate(float error, float time_delta);
+    void reset(void);
 
   private:
     float integral_accumulator, error_prev;

@@ -27,16 +27,15 @@
 
 #include <Arduino.h>
 
-class RotarySwitch
-{
+class RotarySwitch {
   private:
     float rpm_setpoint_raw, rpm_setpoint_filtered;
 
   public:
-    RotarySwitch ();
-    float read_setpoint (void);
-    float filter_setpoint (void);
-    void reset (void);
+    RotarySwitch();
+    float read_setpoint(void);
+    float filter_setpoint(void);
+    void reset(void);
 };
 
 extern RotarySwitch rotarySwitch;

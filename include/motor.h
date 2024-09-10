@@ -27,12 +27,11 @@
 
 #include <Arduino.h>
 
-class Motor
-{
+class Motor {
   public:
-    Motor (void) = delete;
-    static void init (void);
-    static void write (float pwm);
+    Motor(void) = delete;
+    static void init(void);
+    static void write(float pwm);
 };
 
 #endif

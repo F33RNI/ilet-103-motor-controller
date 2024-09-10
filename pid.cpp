@@ -32,7 +32,7 @@
  * @brief Constructs a new PID::PID object
  * (wrapper for reset() that initializes class variables)
  */
-PID::PID (void) { reset (); }
+PID::PID(void) { reset(); }
 
 /**
  * @brief Calculate one cycle of PID-controller
@@ -41,9 +41,7 @@ PID::PID (void) { reset (); }
  * @param time_delta current time - previous time (in seconds)
  * @param pid_output existing variable to write into (will be in [-PID_MIN_MAX_OUT, PID_MIN_MAX_OUT] range)
  */
-float
-PID::calculate (float error, float time_delta)
-{
+float PID::calculate(float error, float time_delta) {
     // Calculate P term
     float p_output = PID_P_GAIN * error;
 
@@ -77,9 +75,7 @@ PID::calculate (float error, float time_delta)
 /**
  * @brief Resets PID's I and D variables
  */
-void
-PID::reset (void)
-{
+void PID::reset(void) {
     integral_accumulator = 0.f;
     error_prev = 0.f;
 }

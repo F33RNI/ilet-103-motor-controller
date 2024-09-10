@@ -32,17 +32,16 @@
 // Actual filter maximum
 const float FILTER_MAX PROGMEM = .990f;
 
-class Encoder
-{
+class Encoder {
   public:
-    void init (void);
-    boolean stall_check (void);
-    void stop (void);
-    void resume (void);
-    float get_time_delta (void);
-    float get_rpm_filtered (void);
-    boolean get_triggered (void);
-    void clear_triggered (void);
+    void init(void);
+    boolean stall_check(void);
+    void stop(void);
+    void resume(void);
+    float get_time_delta(void);
+    float get_rpm_filtered(void);
+    boolean get_triggered(void);
+    void clear_triggered(void);
 
   private:
     volatile uint64_t time_prev;
@@ -52,8 +51,8 @@ class Encoder
     volatile boolean triggered;
     boolean is_interrupt_attached;
 
-    void handle_interrupt (void);
-    static void isr (void);
+    void handle_interrupt(void);
+    static void isr(void);
 };
 
 extern Encoder encoder;
